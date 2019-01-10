@@ -23,31 +23,51 @@ extension Int {
 class GameSet {
     // Declare variables
     private (set) var cardsDeck = [Card]()
-    
-    // Handle main game logic
+    private (set) var cardsOnTable = [Card]()
     
     // Game initialization
     init() {
-        var nonShuffledCards = [Card]()
+        //var nonShuffledCards = [Card]()
         
         // Fill the array, based on all of variant of combination and shuffle this array
         for number in Card.cardFeatureVariants.allVariants {
             for shape in Card.cardFeatureVariants.allVariants {
                 for color in Card.cardFeatureVariants.allVariants {
                     for filling in Card.cardFeatureVariants.allVariants {
-                        nonShuffledCards.append(Card(symbolsNumber: number,
-                                                     symbolsShape: shape,
-                                                     symbolsColor: color,
-                                                     symbolsFilling: filling))
+                        cardsDeck.append(Card(number: number,
+                                              shape: shape,
+                                              color: color,
+                                              filling: filling))
                     }
                 }
             }
         }
-        
+        /*
         // Shuffle the array
         for _ in 0..<nonShuffledCards.count {
             cardsDeck.append(nonShuffledCards.remove(at: nonShuffledCards.count.arc4random))
         }
-        
+        */
     }
+    
+    //MARK: Handle main game logic
+    
+    func deal3Cards(times: Int) {
+        if times > 0 && times <= cardsDeck.count/3 {
+            if cardsDeck.count > 0 {
+                for _ in 0..<times * 3 {
+                    if let card = getCardFromDeck() {
+                        cardsOnTable.append(card)
+                    }
+                }
+            }
+        } else {
+            print("The range is wrong")
+        }
+    }
+    
+    func getCardFromDeck() -> Card? {
+        return cardsDeck.count > 0 ? cardsDeck.remove(at: cardsDeck.count.arc4random) : nil
+    }
+    
 }

@@ -8,10 +8,10 @@
 
 import Foundation
 
-struct Card: Hashable {
-    
+struct Card {
+    /*
     // Iplementation of Hashable protocol
-    var hashValue: Int
+    var hashValue: Int 
     
     static func ==(lhs: Card, rhs: Card) -> Bool {
         return ((lhs.symbolsNumber == rhs.symbolsNumber) ||
@@ -19,7 +19,7 @@ struct Card: Hashable {
                 (lhs.symbolsColor == rhs.symbolsColor) ||
                 (lhs.symbolsFilling == rhs.symbolsFilling))
     }
-    
+    */
     
     enum cardFeature {
         case symbolsNumber(cardFeatureVariants)
@@ -44,5 +44,16 @@ struct Card: Hashable {
     let symbolsColor: cardFeatureVariants
     let symbolsFilling: cardFeatureVariants
     
+    var isSelected: Bool
+    var isMatched: Bool
+    
+    init(number: cardFeatureVariants, shape: cardFeatureVariants, color: cardFeatureVariants, filling: cardFeatureVariants) {
+        symbolsNumber = number
+        symbolsShape = shape
+        symbolsColor = color
+        symbolsFilling = filling
+        isSelected = false
+        isMatched = false
+    }
     
 }
