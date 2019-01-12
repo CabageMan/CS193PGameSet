@@ -8,33 +8,25 @@
 
 import Foundation
 
-struct Card {
-    /*
-    // Iplementation of Hashable protocol
-    var hashValue: Int 
+struct Card: Equatable{
     
     static func ==(lhs: Card, rhs: Card) -> Bool {
-        return ((lhs.symbolsNumber == rhs.symbolsNumber) ||
-                (lhs.symbolsShape == rhs.symbolsShape) ||
-                (lhs.symbolsColor == rhs.symbolsColor) ||
+        return ((lhs.symbolsNumber == rhs.symbolsNumber) &&
+                (lhs.symbolsShape == rhs.symbolsShape) &&
+                (lhs.symbolsColor == rhs.symbolsColor) &&
                 (lhs.symbolsFilling == rhs.symbolsFilling))
     }
-    */
     
-    enum cardFeature {
-        case symbolsNumber(cardFeatureVariants)
-        case symbolsShape(cardFeatureVariants)
-        case symbolsColor(cardFeatureVariants)
-        case symbolsFilling(cardFeatureVariants)
-    }
-    
-    enum cardFeatureVariants {
-        case v1
+    enum cardFeatureVariants: Int {
+        case v1 = 1
         case v2
         case v3
         
         static var allVariants: [cardFeatureVariants]{
             return [.v1, .v2, .v3]
+        }
+        var index: Int {
+            return self.rawValue - 1
         }
     }
     
@@ -44,16 +36,11 @@ struct Card {
     let symbolsColor: cardFeatureVariants
     let symbolsFilling: cardFeatureVariants
     
-    var isSelected: Bool
-    var isMatched: Bool
-    
     init(number: cardFeatureVariants, shape: cardFeatureVariants, color: cardFeatureVariants, filling: cardFeatureVariants) {
         symbolsNumber = number
         symbolsShape = shape
         symbolsColor = color
         symbolsFilling = filling
-        isSelected = false
-        isMatched = false
     }
     
 }

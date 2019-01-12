@@ -24,11 +24,10 @@ class GameSet {
     // Declare variables
     private (set) var cardsDeck = [Card]()
     private (set) var cardsOnTable = [Card]()
+    private (set) var selectedCards = [Card]()
     
     // Game initialization
     init() {
-        //var nonShuffledCards = [Card]()
-        
         // Fill the array, based on all of variant of combination and shuffle this array
         for number in Card.cardFeatureVariants.allVariants {
             for shape in Card.cardFeatureVariants.allVariants {
@@ -42,27 +41,62 @@ class GameSet {
                 }
             }
         }
-        /*
-        // Shuffle the array
-        for _ in 0..<nonShuffledCards.count {
-            cardsDeck.append(nonShuffledCards.remove(at: nonShuffledCards.count.arc4random))
-        }
-        */
     }
     
     //MARK: Handle main game logic
     
+    func chooseCard(at index: Int) {
+        if selectedCards.count < 3 {
+            selectedCards.append(cardsOnTable[index])
+        } else if selectedCards.count == 3 {
+            if isMatched(choosen: selectedCards) {
+                print(":)")
+                replace(choosen: selectedCards)
+                selectedCards.removeAll()
+                selectedCards.append(cardsOnTable[index])
+            } else {
+                print(":(")
+                selectedCards.removeAll()
+                selectedCards.append(cardsOnTable[index])
+            }
+        }
+    }
+    
+    func isMatched(choosen cards: [Card]) -> Bool {
+        // One more check if array with selected cards contain 3 elemetns
+        guard cards.count == 3 else {
+            return false
+        }
+        // If all variants are the same, the remainder of devision sum of they by 3 will be 0
+        // this is true for the case when all variants are completely different
+        let variantsSum = [
+            cards.reduce(0, {$0 + $1.symbolsNumber.rawValue}),
+            cards.reduce(0, {$0 + $1.symbolsColor.rawValue}),
+            cards.reduce(0, {$0 + $1.symbolsShape.rawValue}),
+            cards.reduce(0, {$0 + $1.symbolsFilling.rawValue})
+        ]
+        
+        return variantsSum.reduce(true, {$0 && ($1 % 3 == 0)})
+    }
+    
     func deal3Cards(times: Int) {
-        if times > 0 && times <= cardsDeck.count/3 {
-            if cardsDeck.count > 0 {
-                for _ in 0..<times * 3 {
-                    if let card = getCardFromDeck() {
-                        cardsOnTable.append(card)
-                    }
+        if times > 0 && times <= cardsDeck.count/3 && cardsDeck.count >= 3 {
+            for _ in 0..<times * 3 {
+                if let card = getCardFromDeck() {
+                    cardsOnTable.append(card)
                 }
             }
         } else {
             print("The range is wrong")
+        }
+    }
+    
+    func replace(choosen cards: [Card]) {
+        for card in cards {
+            if let indexOfChoosenCard = cardsOnTable.index(of: card), let newCard = getCardFromDeck() {
+                cardsOnTable.remove(at: indexOfChoosenCard)
+                cardsOnTable.insert(newCard, at: indexOfChoosenCard)
+            }
         }
     }
     
