@@ -74,15 +74,14 @@ class ViewController: UIViewController {
     }
     
     func drawCard(card: Card, on button: UIButton) {
-        let figureShapes = ["○", "□", "▵"]
+        let figureShapes = ["●", "▲", "■"]
         let figureColors = [#colorLiteral(red: 0.8078431487, green: 0.02745098062, blue: 0.3333333433, alpha: 1), #colorLiteral(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 1), #colorLiteral(red: 0.2196078449, green: 0.007843137719, blue: 0.8549019694, alpha: 1)]
         let figureStrokeWidth: [CGFloat] = [-8, 8, -8]
-        let figureAlphas: [CGFloat] = [1.0, 0.4, 0.15]
+        let figureAlphas: [CGFloat] = [1.0, 0.4, 0.23]
         
         // Create string
         let shape = figureShapes[card.symbolsShape.index]
         let figureSeparator = card.symbolsNumber.rawValue > 1 ? "\n" : ""
-        //let buttonIconString = String(repeating: shape + figureSeparator, count: card.symbolsNumber.rawValue)
         let buttonIconString = shape.join(number: card.symbolsNumber.rawValue, with: figureSeparator)
         
         // Create attributes
@@ -92,13 +91,8 @@ class ViewController: UIViewController {
             .foregroundColor: figureColors[card.symbolsColor.index].withAlphaComponent(figureAlphas[card.symbolsFilling.index])
         ]
         
-        print(buttonIconString)
-        
-        print("------------")
-        
-        // Create attributed string
-        //button.setAttributedTitle(NSAttributedString(string: buttonIconString, attributes: attributes), for: .normal)
-        button.setTitle(buttonIconString, for: .normal)
+        // Set attributed button's title
+        button.setAttributedTitle(NSAttributedString(string: buttonIconString, attributes: attributes), for: .normal)
     }
     
     func markButtonAsSelected(button: UIButton) {
