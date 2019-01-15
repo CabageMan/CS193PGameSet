@@ -28,7 +28,7 @@ class GameSet {
     
     // Game initialization
     init() {
-        // Fill the array, based on all of variant of combination and shuffle this array
+        // Fill the array, based on all of variant of combination
         for number in Card.cardFeatureVariants.allVariants {
             for shape in Card.cardFeatureVariants.allVariants {
                 for color in Card.cardFeatureVariants.allVariants {
@@ -46,8 +46,9 @@ class GameSet {
     //MARK: Handle main game logic
     
     func chooseCard(at index: Int) {
-        if selectedCards.count < 3 {
-            selectedCards.append(cardsOnTable[index])
+        if selectedCards.contains(cardsOnTable[index]) && selectedCards.count < 3 {
+            let indexOfSelectedCard = selectedCards.index(of: cardsOnTable[index])
+            selectedCards.remove(at: indexOfSelectedCard!)
         } else if selectedCards.count == 3 {
             if isMatched(choosen: selectedCards) {
                 print(":)")
@@ -59,6 +60,8 @@ class GameSet {
                 selectedCards.removeAll()
                 selectedCards.append(cardsOnTable[index])
             }
+        } else {
+            selectedCards.append(cardsOnTable[index])
         }
     }
     
@@ -100,6 +103,7 @@ class GameSet {
         }
     }
     
+    // Get random card from the deck
     func getCardFromDeck() -> Card? {
         return cardsDeck.count > 0 ? cardsDeck.remove(at: cardsDeck.count.arc4random) : nil
     }
