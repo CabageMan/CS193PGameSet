@@ -21,6 +21,9 @@ extension Int {
 }
 
 class GameSet {
+    // Declare constants
+    static let defaultNumberOfCardsOnTable = 12
+    
     // Declare variables
     private (set) var cardsDeck = [Card]()
     private (set) var cardsOnTable = [Card]()
@@ -46,22 +49,34 @@ class GameSet {
     //MARK: Handle main game logic
     
     func chooseCard(at index: Int) {
-        if selectedCards.contains(cardsOnTable[index]) && selectedCards.count < 3 {
-            let indexOfSelectedCard = selectedCards.index(of: cardsOnTable[index])
+        let chosenCard = cardsOnTable[index]
+        // Check if choosen card is already chose before then it must be unselected
+        // else check for matching
+        if selectedCards.contains(chosenCard) && selectedCards.count < 3 {
+            let indexOfSelectedCard = selectedCards.index(of: chosenCard)
             selectedCards.remove(at: indexOfSelectedCard!)
         } else if selectedCards.count == 3 {
             if isMatched(choosen: selectedCards) {
                 print(":)")
-                replace(choosen: selectedCards)
+                // Check whether is it possible to deal more cards
+                // if it possible, then replace the matching cards on the table
+                // else remove cards from table
+                if cardsOnTable.count <= GameSet.defaultNumberOfCardsOnTable {
+                    print("Cards on table: \(cardsOnTable.count). We can replace cards")
+                    replace(choosen: selectedCards)
+                } else {
+                    remove(choosen: selectedCards)
+                    print("Cards on table: \(cardsOnTable.count). There is no more place for the new cards")
+                }
                 selectedCards.removeAll()
-                selectedCards.append(cardsOnTable[index])
+                selectedCards.append(chosenCard)
             } else {
                 print(":(")
                 selectedCards.removeAll()
-                selectedCards.append(cardsOnTable[index])
+                selectedCards.append(chosenCard)
             }
         } else {
-            selectedCards.append(cardsOnTable[index])
+            selectedCards.append(chosenCard)
         }
     }
     
@@ -72,18 +87,25 @@ class GameSet {
         }
         // If all variants are the same, the remainder of devision sum of they by 3 will be 0
         // this is true for the case when all variants are completely different
+        /*
         let variantsSum = [
             cards.reduce(0, {$0 + $1.symbolsNumber.rawValue}),
             cards.reduce(0, {$0 + $1.symbolsColor.rawValue}),
             cards.reduce(0, {$0 + $1.symbolsShape.rawValue}),
             cards.reduce(0, {$0 + $1.symbolsFilling.rawValue})
         ]
-        
+        */
+        let variantsSum = [
+            cards.reduce(0, {$0 + $1.symbolsShape.rawValue})
+        ]
         return variantsSum.reduce(true, {$0 && ($1 % 3 == 0)})
     }
     
     func deal3Cards(times: Int) {
-        if times > 0 && times <= cardsDeck.count/3 && cardsDeck.count >= 3 {
+        if times > 0 &&
+           times <= cardsDeck.count/3 &&
+           cardsDeck.count >= 3 &&
+           cardsOnTable.count < GameSet.defaultNumberOfCardsOnTable*2 {
             for _ in 0..<times * 3 {
                 if let card = getCardFromDeck() {
                     cardsOnTable.append(card)
@@ -99,6 +121,14 @@ class GameSet {
             if let indexOfChoosenCard = cardsOnTable.index(of: card), let newCard = getCardFromDeck() {
                 cardsOnTable.remove(at: indexOfChoosenCard)
                 cardsOnTable.insert(newCard, at: indexOfChoosenCard)
+            }
+        }
+    }
+    
+    func remove(choosen cards: [Card]) {
+        for card in cards {
+            if let indexOfChoosenCard = cardsOnTable.index(of: card) {
+                cardsOnTable.remove(at: indexOfChoosenCard)
             }
         }
     }

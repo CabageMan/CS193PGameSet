@@ -24,7 +24,9 @@ extension String {
 class ViewController: UIViewController {
     
     @IBOutlet var cardButtons: [UIButton]!
+    @IBOutlet weak var deal3MoreButton: UIButton!
     private lazy var game = GameSet()
+    var indiciesOfCardsOnTable = [Int]()
     
     struct Constants {
         // Default button
@@ -51,7 +53,6 @@ class ViewController: UIViewController {
         if let touchedCardIndex = cardButtons.index(of: sender) {
             game.chooseCard(at: touchedCardIndex)
             updateViewFromModel()
-            print("Index of card: \(touchedCardIndex)")
         } else {
             print("Choosen card not found")
         }
@@ -64,11 +65,12 @@ class ViewController: UIViewController {
     
     func gameStart() {
         game = GameSet()
-        game.deal3Cards(times: 4)
+        game.deal3Cards(times: GameSet.defaultNumberOfCardsOnTable / 3)
         updateViewFromModel()
     }
     
     func updateViewFromModel() {
+        // Update cards on table
         for index in cardButtons.indices {
             let button = cardButtons[index]
             // Display only on table cards
@@ -86,9 +88,16 @@ class ViewController: UIViewController {
                 // Hide and disable button
                 button.backgroundColor = #colorLiteral(red: 1, green: 0.5763723254, blue: 0, alpha: 0)
                 button.isEnabled = false
+                markButtonAsUnselected(button: button)
                 // It must be attributed title
-                button.setTitle("", for: UIControlState.normal)
+                button.setAttributedTitle(nil, for: .normal)
             }
+        }
+        // Update "deal 3 more cards"" button
+        if game.cardsOnTable.count < GameSet.defaultNumberOfCardsOnTable * 2 {
+            deal3MoreButton.isEnabled = true
+        } else {
+            deal3MoreButton.isEnabled = false
         }
     }
     
