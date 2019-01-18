@@ -28,6 +28,7 @@ class GameSet {
     private (set) var cardsDeck = [Card]()
     private (set) var cardsOnTable = [Card]()
     private (set) var selectedCards = [Card]()
+    private (set) var matchedCards = [Card]()
     
     // Game initialization
     init() {
@@ -52,30 +53,33 @@ class GameSet {
         let chosenCard = cardsOnTable[index]
         // Check if choosen card is already chose before then it must be unselected
         // else check for matching
-        if selectedCards.contains(chosenCard) && selectedCards.count < 3 {
+        if selectedCards.contains(chosenCard) && selectedCards.count <= 2 {
             let indexOfSelectedCard = selectedCards.index(of: chosenCard)
             selectedCards.remove(at: indexOfSelectedCard!)
-        } else if selectedCards.count == 3 {
+        } else if selectedCards.count == 2 && !selectedCards.contains(chosenCard) {
+            selectedCards.append(chosenCard)
+            
             if isMatched(choosen: selectedCards) {
                 print(":)")
+                matchedCards = selectedCards
+            } else {
+                print(":(")
+            }
+        } else {
+            if !matchedCards.isEmpty {
                 // Check whether is it possible to deal more cards
                 // if it possible, then replace the matching cards on the table
                 // else remove cards from table
                 if cardsOnTable.count <= GameSet.defaultNumberOfCardsOnTable {
-                    print("Cards on table: \(cardsOnTable.count). We can replace cards")
-                    replace(choosen: selectedCards)
+                    replace(onTable: selectedCards)
                 } else {
-                    remove(choosen: selectedCards)
-                    print("Cards on table: \(cardsOnTable.count). There is no more place for the new cards")
+                    remove(fromTable: selectedCards)
                 }
+                matchedCards.removeAll()
                 selectedCards.removeAll()
-                selectedCards.append(chosenCard)
-            } else {
-                print(":(")
+            } else if selectedCards.count == 3 {
                 selectedCards.removeAll()
-                selectedCards.append(chosenCard)
             }
-        } else {
             selectedCards.append(chosenCard)
         }
     }
@@ -116,7 +120,7 @@ class GameSet {
         }
     }
     
-    func replace(choosen cards: [Card]) {
+    func replace(onTable cards: [Card]) {
         for card in cards {
             if let indexOfChoosenCard = cardsOnTable.index(of: card), let newCard = getCardFromDeck() {
                 cardsOnTable.remove(at: indexOfChoosenCard)
@@ -125,7 +129,7 @@ class GameSet {
         }
     }
     
-    func remove(choosen cards: [Card]) {
+    func remove(fromTable cards: [Card]) {
         for card in cards {
             if let indexOfChoosenCard = cardsOnTable.index(of: card) {
                 cardsOnTable.remove(at: indexOfChoosenCard)

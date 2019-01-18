@@ -10,7 +10,7 @@ import Foundation
 
 struct Card: Equatable{
     
-    static func ==(lhs: Card, rhs: Card) -> Bool {
+    static func == (lhs: Card, rhs: Card) -> Bool {
         return ((lhs.symbolsNumber == rhs.symbolsNumber) &&
                 (lhs.symbolsShape == rhs.symbolsShape) &&
                 (lhs.symbolsColor == rhs.symbolsColor) &&
