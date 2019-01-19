@@ -29,6 +29,7 @@ class GameSet {
     private (set) var cardsOnTable = [Card]()
     private (set) var selectedCards = [Card]()
     private (set) var matchedCards = [Card]()
+    private (set) var playerScore = 0
     
     // Game initialization
     init() {
@@ -60,10 +61,12 @@ class GameSet {
             selectedCards.append(chosenCard)
             
             if isMatched(choosen: selectedCards) {
-                print(":)")
                 matchedCards = selectedCards
+                playerScore += 1
             } else {
-                print(":(")
+                if playerScore > 0 {
+                    playerScore -= 1
+                }
             }
         } else {
             if !matchedCards.isEmpty {
@@ -106,6 +109,11 @@ class GameSet {
     }
     
     func deal3Cards(times: Int) {
+        // If player deal more 3 cards, he loose 1 point
+        if times == 1 && playerScore > 0 {
+            playerScore -= 1
+        }
+        
         if times > 0 &&
            times <= cardsDeck.count/3 &&
            cardsDeck.count >= 3 &&

@@ -279,6 +279,7 @@
                     </view>
                     <connections>
                         <outlet property="deal3MoreButton" destination="wrW-CN-e2U" id="Dkz-13-15i"/>
+                        <outlet property="playerScoreLabel" destination="xnl-6r-HGU" id="Sh2-8O-g58"/>
                         <outletCollection property="cardButtons" destination="qCM-Tc-CXU" collectionClass="NSMutableArray" id="EWP-3L-bKl"/>
                         <outletCollection property="cardButtons" destination="2Gm-Ou-UwD" collectionClass="NSMutableArray" id="Rux-bP-ESX"/>
                         <outletCollection property="cardButtons" destination="UcF-hy-67c" collectionClass="NSMutableArray" id="2J0-Y2-KSu"/>

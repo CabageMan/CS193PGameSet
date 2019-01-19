@@ -25,8 +25,8 @@ class ViewController: UIViewController {
     
     @IBOutlet var cardButtons: [UIButton]!
     @IBOutlet weak var deal3MoreButton: UIButton!
+    @IBOutlet weak var playerScoreLabel: UILabel!
     private lazy var game = GameSet()
-    //var indiciesOfCardsOnTable = [Int]()
     
     enum ButtonsMapping {
         case normal
@@ -94,7 +94,6 @@ class ViewController: UIViewController {
                 let card = game.cardsOnTable[index]
                 
                 // Mark cards
-                
                 if game.matchedCards.count == 3 && game.matchedCards.contains(card) {
                     mark(button: button, like: .matched)
                 } else if game.selectedCards.count == 3 && game.selectedCards.contains(card) {
@@ -104,13 +103,7 @@ class ViewController: UIViewController {
                 } else {
                     mark(button: button, like: .normal)
                 }
-                /*
-                if game.selectedCards.contains(card) {
-                    mark(button: button, like: .selected)
-                } else {
-                    mark(button: button, like: .normal)
-                }
-                */
+                
                 drawCard(card: card, on: button)
             } else {
                 // Hide and disable button
@@ -120,6 +113,9 @@ class ViewController: UIViewController {
                 button.setAttributedTitle(nil, for: .normal)
             }
         }
+        
+        // Update player score label
+        playerScoreLabel.text = "Score: \(game.playerScore)"
         
         // Update "deal 3 more cards"" button
         if game.cardsOnTable.count < GameSet.defaultNumberOfCardsOnTable * 2 {
