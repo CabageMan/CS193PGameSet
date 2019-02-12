@@ -42,5 +42,4 @@ struct Card: Equatable{
         symbolsColor = color
         symbolsFilling = filling
     }
-    
 }

@@ -8,6 +8,43 @@
 
 import UIKit
 
+struct Constants {
+    // it's may be enum with associated data
+    // Default button
+    static let defaultBorderWidth: CGFloat = 0.0
+    static let defaultCornerRadius: CGFloat = 8.0
+    static let defaultBorderColor = UIColor.white.cgColor
+    // Selected button
+    static let selectedBorderWidth: CGFloat = 3.0
+    static let selectedCornerRadius: CGFloat = 6.0
+    static let selectedBorderColor = UIColor.blue.cgColor
+    // Matched button
+    static let matchedBorderWidth: CGFloat = 3.0
+    static let matchedCornerRadius: CGFloat = 6.0
+    static let matchedBorderColor = UIColor.green.cgColor
+    // Not matched button
+    static let notMatchedBorderWidth: CGFloat = 3.0
+    static let notMatchedCornerRadius: CGFloat = 6.0
+    static let notMatchedBorderColor = UIColor.red.cgColor
+    // Hunted button
+    static let hintedBorderWidth: CGFloat = 3.0
+    static let hintedCornerRadius: CGFloat = 6.0
+    static let hintedBorderClor = UIColor.orange.cgColor
+    // Figures constant
+    static let figureShapes = ["●", "▲", "■"]
+    static let figureColors = [#colorLiteral(red: 0.8078431487, green: 0.02745098062, blue: 0.3333333433, alpha: 1), #colorLiteral(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 1), #colorLiteral(red: 0.2196078449, green: 0.007843137719, blue: 0.8549019694, alpha: 1)]
+    static let figureStrokeWidth: [CGFloat] = [-8, 8, -8]
+    static let figureAlphas: [CGFloat] = [1.0, 0.4, 0.23]
+}
+
+enum ButtonsMapping {
+    case normal
+    case selected
+    case matched
+    case notMatched
+    case hinted
+}
+
 extension String {
     func join(number: Int, with separator: String) -> String {
         guard number > 1 else {
@@ -27,38 +64,7 @@ class ViewController: UIViewController {
     @IBOutlet weak var deal3MoreButton: UIButton!
     @IBOutlet weak var playerScoreLabel: UILabel!
     private lazy var game = GameSet()
-    
-    enum ButtonsMapping {
-        case normal
-        case selected
-        case matched
-        case notMatched
-    }
-    
-    struct Constants {
-        // it's may be enum with associated data
-        // Default button
-        static let defaultBorderWidth: CGFloat = 0.0
-        static let defaultCornerRadius: CGFloat = 8.0
-        static let defaultBorderColor = UIColor.white.cgColor
-        // Selected button
-        static let selectedBorderWidth: CGFloat = 3.0
-        static let selectedCornerRadius: CGFloat = 6.0
-        static let selectedBorderColor = UIColor.blue.cgColor
-        // Matched button
-        static let matchedBorderWidth: CGFloat = 3.0
-        static let matchedCornerRadius: CGFloat = 6.0
-        static let matchedBorderColor = UIColor.green.cgColor
-        // Not matched button
-        static let notMatchedBorderWidth: CGFloat = 3.0
-        static let notMatchedCornerRadius: CGFloat = 6.0
-        static let notMatchedBorderColor = UIColor.red.cgColor
-        // Figures constant
-        static let figureShapes = ["●", "▲", "■"]
-        static let figureColors = [#colorLiteral(red: 0.8078431487, green: 0.02745098062, blue: 0.3333333433, alpha: 1), #colorLiteral(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 1), #colorLiteral(red: 0.2196078449, green: 0.007843137719, blue: 0.8549019694, alpha: 1)]
-        static let figureStrokeWidth: [CGFloat] = [-8, 8, -8]
-        static let figureAlphas: [CGFloat] = [1.0, 0.4, 0.23]
-    }
+    private var hintedCards = [Card]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -77,6 +83,17 @@ class ViewController: UIViewController {
     @IBAction func deal3MoreCards(_ sender: UIButton) {
         game.deal3Cards(times: 1)
         updateViewFromModel()
+    }
+    
+    @IBAction func getHint(_ sender: UIButton) {
+        if let getHintedCards = game.getHint() {
+            hintedCards = getHintedCards
+            updateViewFromModel()
+        } else {
+            let alert = UIAlertController(title: nil, message: "There is no sets.", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: NSLocalizedString("OK", comment: "Default action"), style: .`default`, handler: nil))
+            self.present(alert, animated: true, completion: nil)
+        }
     }
     
     func gameStart() {
@@ -100,6 +117,9 @@ class ViewController: UIViewController {
                     mark(button: button, like: .notMatched)
                 } else if game.selectedCards.contains(card) {
                     mark(button: button, like: .selected)
+                } else if hintedCards.count > 0 && hintedCards.contains(card) {
+                    mark(button: button, like: .hinted)
+                    //hintedCards.removeAll()
                 } else {
                     mark(button: button, like: .normal)
                 }
@@ -162,6 +182,10 @@ class ViewController: UIViewController {
                 button.layer.borderWidth = Constants.notMatchedBorderWidth
                 button.layer.borderColor = Constants.notMatchedBorderColor
                 button.layer.cornerRadius = Constants.notMatchedCornerRadius
+            case .hinted:
+                button.layer.borderWidth = Constants.hintedBorderWidth
+                button.layer.borderColor = Constants.hintedBorderClor
+                button.layer.cornerRadius = Constants.hintedCornerRadius
         }
     }
 }

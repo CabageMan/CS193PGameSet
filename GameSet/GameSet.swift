@@ -31,6 +31,24 @@ class GameSet {
     private (set) var matchedCards = [Card]()
     private (set) var playerScore = 0
     
+    // Get all sets on the table
+    var setsOnTable: [[Int]] {
+        var sets = [[Int]]()
+        if cardsOnTable.count > 2 {
+            for firstCardIndex in 0..<cardsOnTable.count {
+                for secondCardIndex in (firstCardIndex + 1)..<cardsOnTable.count {
+                    for thirdCardIndex in (secondCardIndex + 1)..<cardsOnTable.count {
+                        let cards = [cardsOnTable[firstCardIndex], cardsOnTable[secondCardIndex], cardsOnTable[thirdCardIndex]]
+                        if isMatched(choosen: cards) {
+                            sets.append([firstCardIndex, secondCardIndex, thirdCardIndex])
+                        }
+                    }
+                }
+            }
+        }
+        return sets
+    }
+    
     // Game initialization
     init() {
         // Fill the array, based on all of variant of combination
@@ -38,10 +56,7 @@ class GameSet {
             for shape in Card.cardFeatureVariants.allVariants {
                 for color in Card.cardFeatureVariants.allVariants {
                     for filling in Card.cardFeatureVariants.allVariants {
-                        cardsDeck.append(Card(number: number,
-                                              shape: shape,
-                                              color: color,
-                                              filling: filling))
+                        cardsDeck.append(Card(number: number, shape: shape, color: color, filling: filling))
                     }
                 }
             }
@@ -49,7 +64,6 @@ class GameSet {
     }
     
     //MARK: Handle main game logic
-    
     func chooseCard(at index: Int) {
         let chosenCard = cardsOnTable[index]
         // Check if choosen card is already chose before then it must be unselected
@@ -89,21 +103,14 @@ class GameSet {
     
     func isMatched(choosen cards: [Card]) -> Bool {
         // One more check if array with selected cards contain 3 elemetns
-        guard cards.count == 3 else {
-            return false
-        }
+        guard cards.count == 3 else { return false }
         // If all variants are the same, the remainder of devision sum of they by 3 will be 0
         // this is true for the case when all variants are completely different
-        /*
         let variantsSum = [
             cards.reduce(0, {$0 + $1.symbolsNumber.rawValue}),
             cards.reduce(0, {$0 + $1.symbolsColor.rawValue}),
             cards.reduce(0, {$0 + $1.symbolsShape.rawValue}),
             cards.reduce(0, {$0 + $1.symbolsFilling.rawValue})
-        ]
-        */
-        let variantsSum = [
-            cards.reduce(0, {$0 + $1.symbolsShape.rawValue})
         ]
         return variantsSum.reduce(true, {$0 && ($1 % 3 == 0)})
     }
@@ -113,11 +120,7 @@ class GameSet {
         if times == 1 && playerScore > 0 {
             playerScore -= 1
         }
-        
-        if times > 0 &&
-           times <= cardsDeck.count/3 &&
-           cardsDeck.count >= 3 &&
-           cardsOnTable.count < GameSet.defaultNumberOfCardsOnTable*2 {
+        if times > 0 && times <= cardsDeck.count/3 && cardsDeck.count >= 3 && cardsOnTable.count < GameSet.defaultNumberOfCardsOnTable*2 {
             for _ in 0..<times * 3 {
                 if let card = getCardFromDeck() {
                     cardsOnTable.append(card)
@@ -150,4 +153,15 @@ class GameSet {
         return cardsDeck.count > 0 ? cardsDeck.remove(at: cardsDeck.count.arc4random) : nil
     }
     
+    func getHint() -> [Card]? {
+        if setsOnTable.count > 0 {
+            var hintedCards = [Card]()
+            for indexOfHintedCard in setsOnTable[setsOnTable.count.arc4random] {
+                hintedCards.append(cardsOnTable[indexOfHintedCard])
+            }
+            return hintedCards
+        } else {
+            return nil
+        }
+    }
 }
